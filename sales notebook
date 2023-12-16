@@ -1,0 +1,50 @@
+-- total revenue and total cost for each customer as well as profit
+
+SELECT 
+Customer_Name
+, CAST(SUM(UnitPrice * (1 - UnitPriceDiscount) * OrderQty) AS DECIMAL(18, 2)) AS Revenue
+, CAST(SUM(Unit_Cost * OrderQty  + Unit_Freight_Cost) AS DECIMAL(18, 2)) AS Cost
+, CAST((SUM(UnitPrice * (1 - UnitPriceDiscount) * OrderQty) - SUM(Unit_Cost * OrderQty  + Unit_Freight_Cost)) AS DECIMAL(18, 2)) AS Profit
+FROM world.adventure_works_purchase_orders
+GROUP BY Customer_Name
+ORDER BY Profit DESC
+
+-- top customer in terms of revenue
+
+SELECT Customer_Name 
+, CAST(SUM(UnitPrice * (1 - UnitPriceDiscount) * OrderQty) AS DECIMAL(18, 2)) AS Revenue
+FROM world.adventure_works_purchase_orders
+GROUP BY Customer_Name
+order by Revenue desc
+limit 1
+
+-- top 10 highest profit margine customers
+
+select Customer_Name 
+,(SUM(UnitPrice * (1 - UnitPriceDiscount) * OrderQty) - SUM(Unit_Cost * OrderQty  + Unit_Freight_Cost)) / SUM(UnitPrice * (1 - UnitPriceDiscount) * OrderQty) * 100 AS Profit_Margin
+from world.adventure_works_purchase_orders
+group by Customer_Name
+order by Profit_Margin desc
+limit 10
+
+-- top 10 sold products
+
+SELECT Product_Category
+, Product_Sub_Category 
+, Product_Name  
+, sum(OrderQty) as Quantity
+FROM world.adventure_works_purchase_orders
+GROUP BY Product_Category,Product_Sub_Category,Product_Name
+order by Quantity desc
+limit 10
+
+-- top regions in terms of revenue
+
+SELECT Customer_Region
+, Customer_City 
+, CAST(SUM(UnitPrice * (1 - UnitPriceDiscount) * OrderQty) AS DECIMAL(18, 2)) AS Revenue
+FROM world.adventure_works_purchase_orders
+GROUP BY Customer_Region, Customer_City 
+order by Revenue desc
+limit 10
+
